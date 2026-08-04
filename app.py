@@ -6,6 +6,7 @@ from models.user import User
 from models.movie import Movie
 from models.theatre import Theatre
 from models.auditorium import Auditorium
+from models.showtime import Showtime
 
 def create_app():
     app = Flask(__name__)
