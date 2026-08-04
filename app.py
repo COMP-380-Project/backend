@@ -4,7 +4,7 @@ from config import Config
 from database.db import db, init_db
 from models.user import User
 from models.movie import Movie
-from models.booking import Booking
+
 
 def create_app():
     app = Flask(__name__)
