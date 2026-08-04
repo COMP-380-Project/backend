@@ -22,6 +22,10 @@ def create_app():
     CORS(app)
     init_db(app)
     
+    # Register blueprints
+    from routes.auth import auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    
     @app.route('/api/test', methods=['GET'])
     def test():
         return {'message': 'Backend is running!'}
