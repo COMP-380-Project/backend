@@ -16,6 +16,10 @@ from models.order import Order
 from routes.auth import auth_bp
 from routes.movies import movies_bp
 from routes.cart import cart_bp
+from routes.payment import payment_bp
+from routes.orders import orders_bp
+from routes.seats import seats_bp
+from routes.theatres import theatres_bp
 
 def create_app():
     app = Flask(__name__)
@@ -26,9 +30,14 @@ def create_app():
     init_db(app)
     
     # Register blueprints
+    # Register blueprints
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(movies_bp, url_prefix='/api/events')
     app.register_blueprint(cart_bp, url_prefix='/api/cart')
+    app.register_blueprint(payment_bp, url_prefix='/api/payment')
+    app.register_blueprint(orders_bp, url_prefix='/api/orders')
+    app.register_blueprint(seats_bp, url_prefix='/api/seats')
+    app.register_blueprint(theatres_bp, url_prefix='/api/theatres')
     
     @app.route('/api/test', methods=['GET'])
     def test():
