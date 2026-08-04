@@ -5,7 +5,7 @@ from database.db import db, init_db
 from models.user import User
 from models.movie import Movie
 from models.theatre import Theatre
-
+from models.auditorium import Auditorium
 
 def create_app():
     app = Flask(__name__)
