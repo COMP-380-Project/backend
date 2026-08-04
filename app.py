@@ -2,11 +2,14 @@ from flask import Flask
 from flask_cors import CORS
 from config import Config
 from database.db import db, init_db
-from models.user import User
+from models.customer import Customer
 from models.movie import Movie
 from models.theatre import Theatre
 from models.auditorium import Auditorium
 from models.showtime import Showtime
+from models.seat import Seat
+from models.cart import Cart
+from models.ticket import Ticket
 
 def create_app():
     app = Flask(__name__)
