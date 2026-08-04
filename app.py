@@ -10,6 +10,9 @@ from models.showtime import Showtime
 from models.seat import Seat
 from models.cart import Cart
 from models.ticket import Ticket
+from models.payment import Payment
+from models.all_movies import AllMovies
+from models.order import Order
 
 def create_app():
     app = Flask(__name__)
