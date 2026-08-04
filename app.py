@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from config import Config
 from database.db import db, init_db
+from models.user import User
 
 def create_app():
     app = Flask(__name__)
