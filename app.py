@@ -4,6 +4,7 @@ from config import Config
 from database.db import db, init_db
 from models.user import User
 from models.movie import Movie
+from models.theatre import Theatre
 
 
 def create_app():
