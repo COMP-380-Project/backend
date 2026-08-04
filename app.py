@@ -13,7 +13,9 @@ from models.ticket import Ticket
 from models.payment import Payment
 from models.all_movies import AllMovies
 from models.order import Order
+from routes.auth import auth_bp
 from routes.movies import movies_bp
+from routes.cart import cart_bp
 
 def create_app():
     app = Flask(__name__)
@@ -24,10 +26,9 @@ def create_app():
     init_db(app)
     
     # Register blueprints
-    from routes.auth import auth_bp
-    from routes.movies import movies_bp
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(movies_bp, url_prefix='/api/events')
+    app.register_blueprint(cart_bp, url_prefix='/api/cart')
     
     @app.route('/api/test', methods=['GET'])
     def test():
