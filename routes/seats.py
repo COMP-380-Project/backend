@@ -1,3 +1,11 @@
+"""
+Seat Routes
+
+* **Date:** 8/4/26
+* **Programmers:** Mark and Chutiwat
+
+Monitors the availability, locking, and automatic expiration of individual seats.
+"""
 from flask import Blueprint, request, jsonify
 from database.db import db
 from models.seat import Seat
@@ -8,7 +16,19 @@ seats_bp = Blueprint('seats', __name__)
 
 @seats_bp.route('/showtime/<int:showtime_id>', methods=['GET'])
 def get_showtime_seats(showtime_id):
-    """Get all seats for a specific showtime"""
+    """
+    Gets the layout and status of all seats for a showtime.
+
+    Args:
+
+        showtime_id (int): The ID of the showtime gotten from the URL path.
+
+    Returns:
+
+        - 200 (OK): A JSON object detailing the availability logic of each seat.
+        - 404 (Not Found): A JSON error if the showtime is not found.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
     try:
         showtime = Showtime.query.get(showtime_id)
         
@@ -38,7 +58,19 @@ def get_showtime_seats(showtime_id):
 
 @seats_bp.route('/<int:seat_id>/status', methods=['GET'])
 def get_seat_status(seat_id):
-    """Get status of a specific seat"""
+    """
+    Checks availability of a single specific seat.
+    
+    Args:
+    
+        seat_id (int): The ID of the seat gotten from the URL path.
+        
+    Returns:
+    
+        - 200 (OK): A JSON object detailing if the seat is booked, temporarily locked, or available.
+        - 404 (Not Found): A JSON error if the seat is not found.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
     try:
         seat = Seat.query.get(seat_id)
         
@@ -66,7 +98,14 @@ def get_seat_status(seat_id):
 
 @seats_bp.route('/release-expired', methods=['POST'])
 def release_expired_locks():
-    """Release all expired seat locks"""
+    """
+    Release of all seats with expired temporary locks.
+    
+    Returns:
+    
+        - 200 (OK): A JSON object confirming how many locks were successfully released.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
     try:
         seats = Seat.query.filter_by(is_locked=True).all()
         
