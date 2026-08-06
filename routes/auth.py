@@ -1,3 +1,11 @@
+"""
+Authentication Routes
+
+* **Date:** 8/4/26
+* **Programmers:** Mark and Chutiwat
+
+Handles all endpoints related to customer registration, login, and session management.
+"""
 from flask import Blueprint, request, jsonify
 from database.db import db
 from models.customer import Customer
@@ -6,7 +14,23 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    """Register a new customer"""
+    """
+    Register a new customer.
+    
+    Expected JSON Payload:
+
+        email(str): The customer's email address.
+        password (str): The chosen password.
+        name (str): The customer's full name.
+        username (str): A unique username.
+
+    Returns:
+        
+        - 201 (Created): A JSON object containing the new customer's details on success.
+        - 400 (Bad Request): A JSON error message if required fields are missing.
+        - 400 (Bad Request): A JSON error message if the email is already registered.
+        - 400 (Bad Request): A JSON error message if the username is already taken/
+    """
     data = request.get_json()
     
     # Validate required fields
@@ -44,7 +68,19 @@ def register():
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    """Login a customer and return a token"""
+    """Authenticates a customer and returns an access token.
+        
+        Expected JSON Payload:
+            
+            email (str): The registered email address.
+            password (str): The account password.
+            
+        Returns:
+        
+            - 200 (OK): A JSON object with authentication data on success.
+            - 400 (Bad Request): A JSON error message if email or password fields are missing.
+            - 401 (Unauthorized): A JSON error message if the email or password is invalid.
+            """
     data = request.get_json()
     
     if not data or not data.get('email') or not data.get('password'):

@@ -1,3 +1,11 @@
+"""
+Order Routes
+
+* **Date:** 8/4/26
+* **Programmers:** Mark and Chutiwat
+
+Handles fetching customer order histories and cancelling existing ticket orders.
+"""
 from flask import Blueprint, request, jsonify
 from database.db import db
 from models.order import Order
@@ -9,7 +17,19 @@ orders_bp = Blueprint('orders', __name__)
 
 @orders_bp.route('/<int:customer_id>', methods=['GET'])
 def get_customer_orders(customer_id):
-    """Get all orders for a customer"""
+    """
+    Gets the complete order history for a specific customer.
+    
+    Args:
+    
+        customer_id (int): The ID of the customer gotten from the URL path.
+        
+    Returns:
+    
+        - 200 (OK): A JSON list containing summarized order records.
+        - 404 (Not Found): A JSON error message if the customer is not found.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
     try:
         customer = Customer.query.get(customer_id)
         if not customer:
@@ -32,7 +52,19 @@ def get_customer_orders(customer_id):
 
 @orders_bp.route('/<int:order_id>', methods=['GET'])
 def get_order_details(order_id):
-    """Get details of a specific order"""
+    """
+    Gets detailed information regarding a specific order and its payment status.
+
+    Args:
+
+        order_id (int): The ID of the order gotten from the URL path.
+
+    Returns:
+
+        - 200 (OK): A JSON object containing the order summary and linked payment status.
+        - 404 (Not Found): A JSON error message if the order is not found.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
     try:
         order = Order.query.get(order_id)
         
@@ -60,7 +92,20 @@ def get_order_details(order_id):
 
 @orders_bp.route('/<int:order_id>/cancel', methods=['PUT'])
 def cancel_order(order_id):
-    """Cancel an order and unlock seats"""
+    """
+    Cancel an active order and releases its associated booked seats.
+    
+    Args:
+    
+        order_id (int): The ID of the order gotten from the URL path.
+        
+    Returns:
+        
+        - 200 (OK): A JSON object with a confirmation message on success.
+        - 400 (Bad Request): A JSON error if the order is already cancelled.
+        - 404 (Not Found): A JSON error if the order is not found.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+        """
     try:
         order = Order.query.get(order_id)
         

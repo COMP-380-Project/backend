@@ -1,3 +1,11 @@
+"""
+Theatre Routes
+
+* **Date:** 8/4/26
+* **Programmers:** Mark and Chutiwat
+
+Provides data on physical theatre locations, auditoriums, and scheduled showtimes.
+"""
 from flask import Blueprint, request, jsonify
 from database.db import db
 from models.theatre import Theatre
@@ -9,7 +17,14 @@ theatres_bp = Blueprint('theatres', __name__)
 
 @theatres_bp.route('', methods=['GET'])
 def get_all_theatres():
-    """Get all theatres"""
+    """
+    Gets a list of all physical theatre locations in system.
+    
+    Returns:
+    
+        - 200 (OK): A JSON list of theatre details.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
     try:
         theatres = Theatre.query.all()
         
@@ -27,7 +42,19 @@ def get_all_theatres():
 
 @theatres_bp.route('/<int:theatre_id>', methods=['GET'])
 def get_theatre_details(theatre_id):
-    """Get details of a specific theatre with its auditoriums"""
+    """
+    Get specific theatre information and all its associated auditoriums.
+    
+    Args:
+    
+        theatre_id (int): The ID of the theatre gotten from the URL path.
+        
+    Returns:
+    
+        - 200 (OK): A JSON object outliing the theatre and a nested list of auditoriums.
+        - 404 (Not Found): A JSON error if the theatre is not found.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
     try:
         theatre = Theatre.query.get(theatre_id)
         
@@ -55,7 +82,19 @@ def get_theatre_details(theatre_id):
 
 @theatres_bp.route('/auditorium/<int:auditorium_id>', methods=['GET'])
 def get_auditorium_details(auditorium_id):
-    """Get details of a specific auditorium with showtimes"""
+    """
+    Gets all details and scheduled showtimes for a specific auditorium.
+    
+    Args:
+        
+        auditorium_id (int): The ID of the auditorium gotten from the URL path.
+        
+    Returns:
+    
+        - 200 (OK): A JSON object with auditorium characteristics and a nested showtime list.
+        - 404 (Not Found): A JSON error if the auditorium is not found.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
     try:
         auditorium = Auditorium.query.get(auditorium_id)
         

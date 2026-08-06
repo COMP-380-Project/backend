@@ -1,3 +1,11 @@
+"""
+Payment Routes
+
+* **Date:** 8/4/26
+* **Programmers:** Mark and Chutiwat
+
+Processes checkouts, validates transactions, and permanently books cart seats.
+"""
 from flask import Blueprint, request, jsonify
 from database.db import db
 from models.payment import Payment
@@ -12,7 +20,23 @@ payment_bp = Blueprint('payment', __name__)
 
 @payment_bp.route('/checkout', methods=['POST'])
 def checkout():
-    """Process payment and create order"""
+    """
+    Processes payment, creates a finalized order, and permanently books cart seats.
+    
+    Expected JSON Payload:
+    
+        amount (float): The total final checkout amount.
+        payment_method (str): The payment method used (e.g. Credit Card).
+        customer_id (int, optional): The ID of the logged-in customer.
+        cart_id (int, optional): The ID of the cart for guest checout.
+        
+    Returns:
+        
+        - 201 (Created): A comprehensive JSON object containing the order summary, payment receipt, and finalized tickets.
+        - 400 (Bad Request): A JSON error if the amount/payment_method is missing, cart_id is missing for guests, the cart is empty, or the payment fails.
+        - 404 (Not Found): A JSON error if the customer or cart cannot be found.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
     try:
         data = request.get_json()
         
@@ -121,7 +145,19 @@ def checkout():
 
 @payment_bp.route('/verify-payment/<int:payment_id>', methods=['GET'])
 def verify_payment(payment_id):
-    """Verify if a payment was successful"""
+    """
+    Checks the status of an existing payment transaction.
+    
+    Args:
+    
+        payment_id (int): The ID of the payment gotten from the URL path.
+        
+    Returns:
+    
+        - 200 (OK): A JSON object detailing the verification status.
+        - 404 (Not Found): A JSON error if the payment is not found.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
     try:
         payment = Payment.query.get(payment_id)
         

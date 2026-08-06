@@ -1,7 +1,27 @@
+"""
+Customer Model
+* **Date:** 8/4/26
+* **Programmers:** Mark and Chutiwat
+
+Represents a registered user within the system.
+Handles customer registration, login, and account management.
+"""
 from database.db import db
 from datetime import datetime
 
 class Customer(db.Model):
+    """ 
+    Customer Model storing information for authentication and user management
+
+    Attributes:
+
+        id (int): The primary key for the customer.
+        email (str): The unique email address used for contact and login.
+        password (str): The stored password (should be hased in production) for account security.
+        name (str): The full name of the customer.
+        username (str): A unique username chosen by the customer.
+        created_at (datetime): The exact date and time the account was registered.
+    """
     __tablename__ = 'customers'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -12,4 +32,5 @@ class Customer(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now)
     
     def __repr__(self):
+        """Returns string representation of Customer."""
         return f"<Customer {self.email}>"

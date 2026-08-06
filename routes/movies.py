@@ -1,3 +1,11 @@
+"""
+Movie Routes
+
+* **Date:** 8/4/26
+* **Programmers:** Mark and Chutiwat
+
+Provides search and retrieval endpoints for the active movie catalog.
+"""
 from flask import Blueprint, request, jsonify
 from database.db import db
 from models.movie import Movie
@@ -8,7 +16,14 @@ movies_bp = Blueprint('movies', __name__)
 
 @movies_bp.route('', methods=['GET'])
 def get_all_movies():
-    """Get all currently showing movies (events)"""
+    """
+    Gets a catalog of all movies currently flagged as showing.
+    
+    Returns:
+
+        - 200 (OK): A JSON list of movie objects containing core details (title, genre, duration, description, rating, cast)
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
     try:
         # Get all movies that are currently showing
         all_movies = AllMovies.query.filter_by(is_currently_showing=True).all()
@@ -33,7 +48,18 @@ def get_all_movies():
 
 @movies_bp.route('/<int:movie_id>', methods=['GET'])
 def get_movie_details(movie_id):
-    """Get details of a specific movie (event)"""
+    """
+    Gets comprehensive details and scheduled showtimes for a specific movie.
+
+    Args:
+
+        movie_id (int): The ID of the movie gotten from the URL path.
+
+    Returns:
+        - 200 (OK): A JSON object detailing the movie properties and a nested list of its showtimes.
+        - 404 (Not Found): A JSON error message if the movie is not found.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
     try:
         movie = Movie.query.get(movie_id)
         
@@ -66,7 +92,19 @@ def get_movie_details(movie_id):
 
 @movies_bp.route('/search', methods=['GET'])
 def search_movies():
-    """Search for movies by title"""
+    """
+    Searches for currently showing movies by a title.
+
+    Query Parameters:
+
+        title (str): The search query string passed in the URL.
+
+    Returns:
+
+        - 200 (OK): A JSON list of movies matching the search string.
+        - 400 (Bad Request): A JSON error if the title parameter is missing.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
     try:
         title = request.args.get('title', '')
         
