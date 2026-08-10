@@ -22,34 +22,29 @@ def register():
         email(str): The customer's email address.
         password (str): The chosen password.
         name (str): The customer's full name.
-        username (str): A unique username.
 
     Returns:
         
         - 201 (Created): A JSON object containing the new customer's details on success.
         - 400 (Bad Request): A JSON error message if required fields are missing.
         - 400 (Bad Request): A JSON error message if the email is already registered.
-        - 400 (Bad Request): A JSON error message if the username is already taken/
     """
     data = request.get_json()
     
     # Validate required fields
-    if not data or not data.get('email') or not data.get('password') or not data.get('name') or not data.get('username'):
+    if not data or not data.get('email') or not data.get('password') or not data.get('name'):
         return jsonify({'error': 'Missing required fields'}), 400
     
     # Check if customer already exists
     if Customer.query.filter_by(email=data['email']).first():
         return jsonify({'error': 'Email already registered'}), 400
     
-    if Customer.query.filter_by(username=data['username']).first():
-        return jsonify({'error': 'Username already taken'}), 400
-    
     # Create new customer
     new_customer = Customer(
         email=data['email'],
         password=data['password'],  # TODO: Hash password in production!
         name=data['name'],
-        username=data['username']
+        role='customer'
     )
     
     db.session.add(new_customer)
@@ -61,7 +56,7 @@ def register():
             'id': new_customer.id,
             'email': new_customer.email,
             'name': new_customer.name,
-            'username': new_customer.username
+            'role': new_customer.role
         }
     }), 201
 
@@ -93,12 +88,11 @@ def login():
         return jsonify({'error': 'Invalid email or password'}), 401
     
     # TODO: Generate JWT token in production
-    # For now, we'll use a simple auth object
+    # For now, we'll use a simple auth object matching frontend's AuthUser shape
     auth_data = {
-        'id': customer.id,
-        'email': customer.email,
+        'userId': customer.id,
         'name': customer.name,
-        'username': customer.username
+        'role': customer.role
     }
     
     return jsonify({
