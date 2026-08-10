@@ -33,7 +33,6 @@ def test_lock_seat(test_client):
     print("a) Test case: Verify lock_seat method updates lock status.")
     print("b) Expected Value: True")
     print(f"c) Test Result: {seat.is_locked}")
-    print("\n")
 
     assert seat.is_locked is True
     assert seat.locked_by_user == customer.id
@@ -58,7 +57,6 @@ def test_unlock_seat(test_client):
     print("a) Test case: Verify unlock_seat method updates lock status.")
     print("b) Expected Value: False")
     print(f"c) Test Result: {seat.is_locked}")
-    print("\n")
 
     assert seat.is_locked is False
     assert seat.locked_by_user is None
@@ -79,7 +77,6 @@ def test_is_lock_expired(test_client):
     print("a) Verify null expiration returns False")
     print("b) Expected Value: False")
     print(f"c) Test Result: {seat.is_lock_expired()}")
-    print("\n")
 
     assert seat.is_lock_expired() is False
 
@@ -91,7 +88,6 @@ def test_is_lock_expired(test_client):
     print("a) Verify active lock returns False")
     print("b) Expected Value: False")
     print(f"c) Test Result: {seat.is_lock_expired()}")
-    print("\n")
 
     assert seat.is_lock_expired() is False
 
@@ -103,6 +99,5 @@ def test_is_lock_expired(test_client):
     print("a) Verify expired lock returns True")
     print("b) Expected Value: True")
     print(f"c) Test Result: {seat.is_lock_expired()}")
-    print("\n")
 
     assert seat.is_lock_expired() is True
