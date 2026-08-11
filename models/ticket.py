@@ -6,6 +6,14 @@ Ticket Model
 Represents a ticket for a specific movies showing at a specific seat
 """
 from database.db import db
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+
+def pacific_now():
+    """Returns the current date and time in US Pacific time, regardless of server timezone."""
+    return datetime.now(ZoneInfo("America/Los_Angeles")).replace(tzinfo=None)
+
 
 class Ticket(db.Model):
     """
@@ -19,20 +27,22 @@ class Ticket(db.Model):
         seat_id (int): The foreign key linking to the assigned Seat.
         ticket_type (str): The type of ticket (Adult, Kid, Senior).
         price (float): The price of this specific ticket.
+        purchased_at (datetime): Pacific-time timestamp of when this ticket record was created, for financial reporting.
     """
     __tablename__ = 'tickets'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     cart_id = db.Column(db.Integer, db.ForeignKey('carts.id'), nullable=False)
     showtime_id = db.Column(db.Integer, db.ForeignKey('showtimes.id'), nullable=False)
     seat_id = db.Column(db.Integer, db.ForeignKey('seats.id'), nullable=False)
     ticket_type = db.Column(db.String(20), nullable=False)  # Adult, Kid, Senior
     price = db.Column(db.Float, nullable=False)
-    
+    purchased_at = db.Column(db.DateTime, default=pacific_now)
+
     # Relationships
     showtime = db.relationship('Showtime', backref='tickets')
     seat = db.relationship('Seat', backref='tickets')
-    
+
     def __repr__(self):
         """Returns a string representation of Ticket."""
         return f"<Ticket {self.id} - {self.ticket_type}>"
