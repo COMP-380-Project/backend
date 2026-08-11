@@ -1,0 +1,573 @@
+openapi: 3.0.3
+info:
+  title: MCAB Theater Backend API
+  description: Movie ticket booking backend for COMP 380 project (404 Group Not Found)
+  version: "1.0"
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+tags:
+  - name: Auth
+  - name: Movies
+  - name: Theatres
+  - name: Seats
+  - name: Cart
+  - name: Payment
+  - name: Orders
+  - name: Admin
+
+paths:
+  /api/auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, name]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+                name: { type: string }
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  customer:
+                    type: object
+                    properties:
+                      id: { type: integer }
+                      email: { type: string }
+                      name: { type: string }
+                      role: { type: string, enum: [customer, manager] }
+        '400':
+          description: Missing fields or email already registered
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Log in and receive an auth token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  auth:
+                    type: object
+                    properties:
+                      userId: { type: integer }
+                      name: { type: string }
+                      role: { type: string, enum: [customer, manager] }
+                  token: { type: string }
+        '400':
+          description: Missing email or password
+        '401':
+          description: Invalid email or password
+
+  /api/events:
+    get:
+      tags: [Movies]
+      summary: List all currently showing movies
+      responses:
+        '200':
+          description: Array of movies
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Movie' }
+
+  /api/events/{movie_id}:
+    get:
+      tags: [Movies]
+      summary: Get movie details including showtimes
+      parameters:
+        - name: movie_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Movie details with showtimes
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Movie'
+                  - type: object
+                    properties:
+                      showtimes:
+                        type: array
+                        items: { $ref: '#/components/schemas/Showtime' }
+        '404':
+          description: Movie not found
+
+  /api/events/search:
+    get:
+      tags: [Movies]
+      summary: Search movies by title
+      parameters:
+        - name: title
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Array of matching movies
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Movie' }
+        '400':
+          description: Missing title parameter
+
+  /api/theatres:
+    get:
+      tags: [Theatres]
+      summary: List all theatres
+      responses:
+        '200':
+          description: Array of theatres
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Theatre' }
+
+  /api/theatres/{theatre_id}:
+    get:
+      tags: [Theatres]
+      summary: Get theatre details with its auditoriums
+      parameters:
+        - name: theatre_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Theatre with auditoriums
+        '404':
+          description: Theatre not found
+
+  /api/theatres/auditorium/{auditorium_id}:
+    get:
+      tags: [Theatres]
+      summary: Get auditorium details with its showtimes
+      parameters:
+        - name: auditorium_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Auditorium with showtimes
+        '404':
+          description: Auditorium not found
+
+  /api/seats/showtime/{showtime_id}:
+    get:
+      tags: [Seats]
+      summary: Get all seats for a showtime with availability status
+      parameters:
+        - name: showtime_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Seat map for the showtime
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  showtime_id: { type: integer }
+                  total_seats: { type: integer }
+                  available_seats: { type: integer }
+                  seats:
+                    type: array
+                    items: { $ref: '#/components/schemas/Seat' }
+        '404':
+          description: Showtime not found
+
+  /api/seats/{seat_id}/status:
+    get:
+      tags: [Seats]
+      summary: Get the current status of a single seat
+      parameters:
+        - name: seat_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Seat status
+        '404':
+          description: Seat not found
+
+  /api/seats/release-expired:
+    post:
+      tags: [Seats]
+      summary: Release all seat locks that have expired
+      responses:
+        '200':
+          description: Number of locks released
+
+  /api/cart/{customer_id}:
+    get:
+      tags: [Cart]
+      summary: Get a customer's current cart
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Cart with tickets
+        '404':
+          description: Cart not found
+
+  /api/cart/{customer_id}/add-seat:
+    post:
+      tags: [Cart]
+      summary: Lock a seat and add it to the cart as a ticket
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [showtime_id, seat_id, ticket_type]
+              properties:
+                showtime_id: { type: integer }
+                seat_id: { type: integer }
+                ticket_type: { type: string, enum: [Adult, Kid, Senior] }
+      responses:
+        '201':
+          description: Seat locked and added to cart
+        '400':
+          description: Seat already booked or locked by someone else
+        '404':
+          description: Seat or showtime not found
+
+  /api/cart/{customer_id}/remove-seat:
+    delete:
+      tags: [Cart]
+      summary: Remove a ticket from the cart and unlock its seat
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ticket_id]
+              properties:
+                ticket_id: { type: integer }
+      responses:
+        '200':
+          description: Seat removed and unlocked
+        '404':
+          description: Ticket not found
+
+  /api/cart/{customer_id}/calculate-total:
+    get:
+      tags: [Cart]
+      summary: Get subtotal, tax, fees, and total for the cart
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Price breakdown
+        '404':
+          description: Cart not found
+
+  /api/payment/checkout:
+    post:
+      tags: [Payment]
+      summary: Process payment, create an order, and permanently book seats
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount, payment_method]
+              properties:
+                amount: { type: number }
+                payment_method: { type: string }
+                customer_id:
+                  type: integer
+                  description: Omit for guest checkout
+                cart_id:
+                  type: integer
+                  description: Required if customer_id is omitted (guest checkout)
+      responses:
+        '201':
+          description: Order created, receipt included
+        '400':
+          description: Missing fields, empty cart, or payment failed
+        '404':
+          description: Customer or cart not found
+
+  /api/payment/verify-payment/{payment_id}:
+    get:
+      tags: [Payment]
+      summary: Check the status of a payment
+      parameters:
+        - name: payment_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Payment status
+        '404':
+          description: Payment not found
+
+  /api/orders/{customer_id}:
+    get:
+      tags: [Orders]
+      summary: Get all orders for a customer
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Array of orders
+        '404':
+          description: Customer not found
+
+  /api/orders/{order_id}:
+    get:
+      tags: [Orders]
+      summary: Get full details for one order, including seats, auditorium, movie, and showtime
+      parameters:
+        - name: order_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Full order details
+        '404':
+          description: Order not found
+
+  /api/orders/{order_id}/cancel:
+    put:
+      tags: [Orders]
+      summary: Cancel an order and release its seats
+      parameters:
+        - name: order_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Order cancelled
+        '400':
+          description: Order already cancelled
+        '404':
+          description: Order not found
+
+  /api/admin/movies:
+    post:
+      tags: [Admin]
+      summary: (Manager only) Add a new movie to the catalog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customer_id, title, genre, duration, description, cast]
+              properties:
+                customer_id: { type: integer, description: Must belong to a manager }
+                title: { type: string }
+                genre: { type: string }
+                duration: { type: integer }
+                description: { type: string }
+                rating: { type: number }
+                cast: { type: string }
+      responses:
+        '201':
+          description: Movie added
+        '403':
+          description: Requesting customer is not a manager
+        '404':
+          description: Customer not found
+
+  /api/admin/movies/{movie_id}/toggle-showing:
+    put:
+      tags: [Admin]
+      summary: (Manager only) Show or hide a movie from the currently-showing list
+      parameters:
+        - name: movie_id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customer_id, is_currently_showing]
+              properties:
+                customer_id: { type: integer }
+                is_currently_showing: { type: boolean }
+      responses:
+        '200':
+          description: Status updated
+        '403':
+          description: Requesting customer is not a manager
+        '404':
+          description: Movie or customer not found
+
+  /api/admin/theatres:
+    post:
+      tags: [Admin]
+      summary: (Manager only) Add a new theatre location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customer_id, name, address, num_auditoriums]
+              properties:
+                customer_id: { type: integer }
+                name: { type: string }
+                address: { type: string }
+                num_auditoriums: { type: integer }
+      responses:
+        '201':
+          description: Theatre added
+        '403':
+          description: Requesting customer is not a manager
+
+  /api/admin/auditoriums:
+    post:
+      tags: [Admin]
+      summary: (Manager only) Add a new auditorium to a theatre
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customer_id, theatre_id, auditorium_type, seat_capacity]
+              properties:
+                customer_id: { type: integer }
+                theatre_id: { type: integer }
+                auditorium_type: { type: string, example: "Standard or IMAX" }
+                seat_capacity: { type: integer }
+      responses:
+        '201':
+          description: Auditorium added
+        '403':
+          description: Requesting customer is not a manager
+        '404':
+          description: Theatre not found
+
+  /api/admin/showtimes:
+    post:
+      tags: [Admin]
+      summary: (Manager only) Add a showtime; automatically generates its seats
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customer_id, movie_id, auditorium_id, showtime, price]
+              properties:
+                customer_id: { type: integer }
+                movie_id: { type: integer }
+                auditorium_id: { type: integer }
+                showtime: { type: string, format: date-time, example: "2026-08-15T19:30:00" }
+                price: { type: number }
+      responses:
+        '201':
+          description: Showtime added, seats generated
+        '403':
+          description: Requesting customer is not a manager
+        '404':
+          description: Movie or auditorium not found
+
+components:
+  schemas:
+    Movie:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        genre: { type: string }
+        duration: { type: integer }
+        description: { type: string }
+        rating: { type: number }
+        cast: { type: string }
+
+    Showtime:
+      type: object
+      properties:
+        id: { type: integer }
+        auditorium_id: { type: integer }
+        showtime: { type: string, format: date-time }
+        price: { type: number }
+
+    Theatre:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        address: { type: string }
+        num_auditoriums: { type: integer }
+
+    Seat:
+      type: object
+      properties:
+        id: { type: integer }
+        seat_number: { type: string }
+        is_booked: { type: boolean }
+        is_locked: { type: boolean }
+        status: { type: string, enum: [available, locked, booked] }
