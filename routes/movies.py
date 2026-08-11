@@ -14,20 +14,42 @@ from models.showtime import Showtime
 
 movies_bp = Blueprint('movies', __name__)
 
+
+def get_showtimes_for_movie(movie_id):
+    """
+    Builds the list of showtime objects for a given movie.
+
+    Args:
+
+        movie_id (int): The ID of the movie to fetch showtimes for.
+
+    Returns:
+
+        list: A list of dicts each containing id, auditorium_id, showtime, and price.
+    """
+    showtimes = Showtime.query.filter_by(movie_id=movie_id).all()
+    return [{
+        'id': showtime.id,
+        'auditorium_id': showtime.auditorium_id,
+        'showtime': showtime.showtime.isoformat(),
+        'price': showtime.price
+    } for showtime in showtimes]
+
+
 @movies_bp.route('', methods=['GET'])
 def get_all_movies():
     """
     Gets a catalog of all movies currently flagged as showing.
-    
+
     Returns:
 
-        - 200 (OK): A JSON list of movie objects containing core details (title, genre, duration, description, rating, cast)
+        - 200 (OK): A JSON list of movie objects containing core details (title, genre, duration, description, rating, cast, showtimes)
         - 500 (Internal Server Error): A JSON error message if a server exception occurs.
     """
     try:
         # Get all movies that are currently showing
         all_movies = AllMovies.query.filter_by(is_currently_showing=True).all()
-        
+
         movies_list = []
         for movie_showing in all_movies:
             movie = movie_showing.movie
@@ -38,9 +60,10 @@ def get_all_movies():
                 'duration': movie.duration,
                 'description': movie.description,
                 'rating': movie.rating,
-                'cast': movie.cast
+                'cast': movie.cast,
+                'showtimes': get_showtimes_for_movie(movie.id)
             })
-        
+
         return jsonify(movies_list), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -62,20 +85,10 @@ def get_movie_details(movie_id):
     """
     try:
         movie = Movie.query.get(movie_id)
-        
+
         if not movie:
             return jsonify({'error': 'Movie not found'}), 404
-        
-        # Get showtimes for this movie
-        showtimes = Showtime.query.filter_by(movie_id=movie_id).all()
-        
-        showtimes_list = [{
-            'id': showtime.id,
-            'auditorium_id': showtime.auditorium_id,
-            'showtime': showtime.showtime.isoformat(),
-            'price': showtime.price
-        } for showtime in showtimes]
-        
+
         return jsonify({
             'id': movie.id,
             'title': movie.title,
@@ -84,7 +97,7 @@ def get_movie_details(movie_id):
             'description': movie.description,
             'rating': movie.rating,
             'cast': movie.cast,
-            'showtimes': showtimes_list
+            'showtimes': get_showtimes_for_movie(movie.id)
         }), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -107,15 +120,15 @@ def search_movies():
     """
     try:
         title = request.args.get('title', '')
-        
+
         if not title:
             return jsonify({'error': 'Title parameter required'}), 400
-        
+
         all_movies = AllMovies.query.join(Movie).filter(
             Movie.title.contains(title),
             AllMovies.is_currently_showing == True
         ).all()
-        
+
         movies_list = [{
             'id': movie_showing.movie.id,
             'title': movie_showing.movie.title,
@@ -123,9 +136,10 @@ def search_movies():
             'duration': movie_showing.movie.duration,
             'description': movie_showing.movie.description,
             'rating': movie_showing.movie.rating,
-            'cast': movie_showing.movie.cast
+            'cast': movie_showing.movie.cast,
+            'showtimes': get_showtimes_for_movie(movie_showing.movie.id)
         } for movie_showing in all_movies]
-        
+
         return jsonify(movies_list), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
