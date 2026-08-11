@@ -67,16 +67,13 @@ def get_order_details(order_id):
     """
     try:
         order = Order.query.get(order_id)
-        
+
         if not order:
             return jsonify({'error': 'Order not found'}), 404
-        
-        # Get all tickets associated with this order through cart
-        # (Tickets are in cart, and cart is linked to payment/order)
-        tickets = Ticket.query.filter_by(cart_id=order.payment.order[0].id if order.payment else None).all()
-        
-        # Simpler approach: get from payment and work backwards
-        # For now, return order info
+
+        showtime = order.get_showtime()
+        auditorium = order.get_auditorium()
+
         return jsonify({
             'id': order.id,
             'customer_id': order.customer_id,
@@ -84,7 +81,11 @@ def get_order_details(order_id):
             'total_amount': order.total_amount,
             'order_status': order.order_status,
             'created_at': order.created_at.isoformat(),
-            'payment_status': order.payment.payment_status if order.payment else None
+            'payment_status': order.payment.payment_status if order.payment else None,
+            'seat_numbers': order.get_seat_number(),
+            'auditorium_type': auditorium.auditorium_type if auditorium else None,
+            'movie_title': showtime.movie.title if showtime and showtime.movie else None,
+            'showtime': showtime.showtime.isoformat() if showtime else None
         }), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -115,13 +116,9 @@ def cancel_order(order_id):
         if order.order_status == 'cancelled':
             return jsonify({'error': 'Order is already cancelled'}), 400
         
-        # Find all tickets for this order and unlock seats
-        # Get cart from payment
-        from models.cart import Cart
-        cart = Cart.query.filter_by(customer_id=order.customer_id).first()
-        
-        if cart:
-            for ticket in cart.tickets:
+        # Unlock/unbook all seats tied to this order's cart
+        if order.cart:
+            for ticket in order.cart.tickets:
                 seat = Seat.query.get(ticket.seat_id)
                 if seat:
                     seat.is_booked = False

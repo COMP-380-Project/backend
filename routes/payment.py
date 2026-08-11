@@ -93,6 +93,7 @@ def checkout():
         order = Order(
             customer_id=customer_id,
             payment_id=payment.id,
+            cart_id=cart.id,
             total_amount=data['amount'],
             order_status='confirmed'
         )
