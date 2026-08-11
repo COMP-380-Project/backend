@@ -162,6 +162,23 @@ def seed_seats(showtimes_with_auditorium):
     print(f"Created {total_seats_created} seats across all showtimes")
 
 
+def seed_manager():
+    """Create one manager account for testing admin functionality"""
+    from werkzeug.security import generate_password_hash
+    from models.customer import Customer
+
+    manager = Customer(
+        email="manager@cinema.com",
+        password=generate_password_hash("manager123"),
+        name="Theatre Manager",
+        role="manager"
+    )
+    db.session.add(manager)
+    db.session.commit()
+    print(f"Created manager account (email: manager@cinema.com, password: manager123)")
+    return manager
+
+
 def run_seed():
     """Main entry point to seed the database"""
     app = create_app()
@@ -173,8 +190,11 @@ def run_seed():
         theatre, auditoriums = seed_theatres()
         showtimes_with_auditorium = seed_showtimes(movies, auditoriums)
         seed_seats(showtimes_with_auditorium)
+        seed_manager()
 
         print("Database seed complete!")
+
+
 
 
 if __name__ == "__main__":

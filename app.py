@@ -20,6 +20,7 @@ from routes.payment import payment_bp
 from routes.orders import orders_bp
 from routes.seats import seats_bp
 from routes.theatres import theatres_bp
+from routes.admin import admin_bp
 
 def create_app():
     app = Flask(__name__)
@@ -38,6 +39,7 @@ def create_app():
     app.register_blueprint(orders_bp, url_prefix='/api/orders')
     app.register_blueprint(seats_bp, url_prefix='/api/seats')
     app.register_blueprint(theatres_bp, url_prefix='/api/theatres')
+    app.register_blueprint(admin_bp, url_prefix='/api/admin')
     
     @app.route('/api/test', methods=['GET'])
     def test():

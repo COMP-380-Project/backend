@@ -9,6 +9,7 @@ Handles all endpoints related to customer registration, login, and session manag
 from flask import Blueprint, request, jsonify
 from database.db import db
 from models.customer import Customer
+from werkzeug.security import generate_password_hash, check_password_hash
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -42,7 +43,7 @@ def register():
     # Create new customer
     new_customer = Customer(
         email=data['email'],
-        password=data['password'],  # TODO: Hash password in production!
+        password=generate_password_hash(data['password']),
         name=data['name'],
         role='customer'
     )
@@ -84,7 +85,7 @@ def login():
     # Find customer by email
     customer = Customer.query.filter_by(email=data['email']).first()
     
-    if not customer or customer.password != data['password']:
+    if not customer or not check_password_hash(customer.password, data['password']):
         return jsonify({'error': 'Invalid email or password'}), 401
     
     # TODO: Generate JWT token in production
