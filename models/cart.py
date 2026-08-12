@@ -22,7 +22,7 @@ class Cart(db.Model):
     __tablename__ = 'carts'
     
     id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=True)
     subtotal = db.Column(db.Float, default=0.0)
     created_at = db.Column(db.DateTime, default=datetime.now)
     

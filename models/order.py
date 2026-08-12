@@ -25,7 +25,7 @@ class Order(db.Model):
     __tablename__ = 'orders'
 
     id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=True)
     payment_id = db.Column(db.Integer, db.ForeignKey('payments.id'), nullable=False)
     cart_id = db.Column(db.Integer, db.ForeignKey('carts.id'), nullable=True)
     total_amount = db.Column(db.Float, nullable=False)
