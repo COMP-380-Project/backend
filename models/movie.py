@@ -30,6 +30,7 @@ class Movie(db.Model):
     description = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Float, default=0.0)
     cast = db.Column(db.String(500), nullable=False)  # comma-separated actors
+    poster_url = db.Column(db.String(500), nullable=True)
     
     def __repr__(self):
         """Returns a string representation of Movie."""
