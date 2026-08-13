@@ -29,8 +29,10 @@ class Showtime(db.Model):
     showtime = db.Column(db.DateTime, nullable=False)
     price = db.Column(db.Float, nullable=False)
     
+    
     # Relationship to Seats
     seats = db.relationship('Seat', backref='showtime', lazy=True)
+    movie = db.relationship('Movie', backref='showtimes')
     
     def __repr__(self):
         """Returns string representation of Showtime."""

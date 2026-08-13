@@ -38,7 +38,9 @@ def _serialize_cart(cart):
         'seat_id': ticket.seat_id,
         'seat_number': ticket.seat.seat_number,
         'ticket_type': ticket.ticket_type,
-        'price': ticket.price
+        'price': ticket.price,
+        'movie_title': ticket.showtime.movie.title if ticket.showtime and ticket.showtime.movie else None,
+        'showtime': ticket.showtime.showtime.isoformat() if ticket.showtime else None
     } for ticket in cart.tickets]
 
     return {
