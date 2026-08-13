@@ -43,10 +43,11 @@ def get_all_movies():
 
     Returns:
 
-        - 200 (OK): A JSON list of movie objects containing core details (title, genre, duration, description, rating, cast, poster_url, showtimes)
+        - 200 (OK): A JSON list of movie objects containing core details (title, genre, duration, description, rating, cast, showtimes)
         - 500 (Internal Server Error): A JSON error message if a server exception occurs.
     """
     try:
+        # Get all movies that are currently showing
         all_movies = AllMovies.query.filter_by(is_currently_showing=True).all()
 
         movies_list = []
@@ -60,7 +61,6 @@ def get_all_movies():
                 'description': movie.description,
                 'rating': movie.rating,
                 'cast': movie.cast,
-                'poster_url': movie.poster_url,
                 'showtimes': get_showtimes_for_movie(movie.id)
             })
 
@@ -97,7 +97,6 @@ def get_movie_details(movie_id):
             'description': movie.description,
             'rating': movie.rating,
             'cast': movie.cast,
-            'poster_url': movie.poster_url,
             'showtimes': get_showtimes_for_movie(movie.id)
         }), 200
     except Exception as e:
@@ -138,7 +137,6 @@ def search_movies():
             'description': movie_showing.movie.description,
             'rating': movie_showing.movie.rating,
             'cast': movie_showing.movie.cast,
-            'poster_url': movie_showing.movie.poster_url,
             'showtimes': get_showtimes_for_movie(movie_showing.movie.id)
         } for movie_showing in all_movies]
 

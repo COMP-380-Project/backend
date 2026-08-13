@@ -32,7 +32,6 @@ def seed_movies():
             "description": "A young hero balances everyday life with the responsibility of protecting the city using his extraordinary abilities.",
             "rating": 8.2,
             "cast": "Tom Holland, Zendaya, Jacob Batalon"
-            "poster_url": "/posters/spiderman.jpg"
         },
         {
             "title": "The Odyssey",
@@ -41,7 +40,6 @@ def seed_movies():
             "description": "A legendary warrior faces trials across land and sea on a perilous journey home after a decade-long war.",
             "rating": 8.0,
             "cast": "Matt Damon, Tom Holland, Anne Hathaway"
-            "poster_url": "/posters/odyssey.jpeg"
         },
         {
             "title": "Minions",
@@ -50,8 +48,6 @@ def seed_movies():
             "description": "A mischievous group of yellow henchmen search for a new villain to serve, leading to chaotic misadventures.",
             "rating": 7.0,
             "cast": "Steve Carell, Pierre Coffin, Alan Arkin"
-            "poster_url": "/posters/minions.jpg"
-            
         },
         {
             "title": "Toy Story 5",
@@ -60,7 +56,6 @@ def seed_movies():
             "description": "Woody, Buzz, and the gang face a new challenge as their kid grows up and technology reshapes the world of toys.",
             "rating": 7.9,
             "cast": "Tom Hanks, Tim Allen, Annie Potts"
-            "poster_url": "/posters/ts5.jpeg"
         }
     ]
 
