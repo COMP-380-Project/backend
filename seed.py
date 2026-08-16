@@ -31,7 +31,8 @@ def seed_movies():
             "duration": 130,
             "description": "A young hero balances everyday life with the responsibility of protecting the city using his extraordinary abilities.",
             "rating": 8.2,
-            "cast": "Tom Holland, Zendaya, Jacob Batalon"
+            "cast": "Tom Holland, Zendaya, Jacob Batalon",
+            "poster_url": "https://picsum.photos/400/600"
         },
         {
             "title": "The Odyssey",
@@ -39,7 +40,8 @@ def seed_movies():
             "duration": 150,
             "description": "A legendary warrior faces trials across land and sea on a perilous journey home after a decade-long war.",
             "rating": 8.0,
-            "cast": "Matt Damon, Tom Holland, Anne Hathaway"
+            "cast": "Matt Damon, Tom Holland, Anne Hathaway",
+            "poster_url": "https://picsum.photos/400/600"
         },
         {
             "title": "Minions",
@@ -47,7 +49,8 @@ def seed_movies():
             "duration": 91,
             "description": "A mischievous group of yellow henchmen search for a new villain to serve, leading to chaotic misadventures.",
             "rating": 7.0,
-            "cast": "Steve Carell, Pierre Coffin, Alan Arkin"
+            "cast": "Steve Carell, Pierre Coffin, Alan Arkin",
+            "poster_url": "https://picsum.photos/400/600"
         },
         {
             "title": "Toy Story 5",
@@ -55,7 +58,8 @@ def seed_movies():
             "duration": 105,
             "description": "Woody, Buzz, and the gang face a new challenge as their kid grows up and technology reshapes the world of toys.",
             "rating": 7.9,
-            "cast": "Tom Hanks, Tim Allen, Annie Potts"
+            "cast": "Tom Hanks, Tim Allen, Annie Potts",
+            "poster_url": "https://picsum.photos/400/600"
         }
     ]
 
