@@ -20,6 +20,7 @@ class Movie(db.Model):
         description (str): The description of the movie.
         rating (float): The current rating of the movie, defaulting to 0.0.
         cast (str): A comma-separated list of actors.
+        poster_url (str): The URL link to the movie's promotional poster.
         """
     __tablename__ = 'movies'
     
@@ -30,6 +31,7 @@ class Movie(db.Model):
     description = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Float, default=0.0)
     cast = db.Column(db.String(500), nullable=False)  # comma-separated actors
+    poster_url = db.Column(db.String(500), nullable=True)
     
     def __repr__(self):
         """Returns a string representation of Movie."""
