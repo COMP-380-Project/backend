@@ -1,8 +1,8 @@
 """
 Theatre Routes
 
-* **Date:** 8/4/26
-* **Programmers:** Mark and Chutiwat
+* *Date:* 8/4/26
+* *Programmers:* Mark and Chutiwat
 
 Provides data on physical theatre locations, auditoriums, and scheduled showtimes.
 """

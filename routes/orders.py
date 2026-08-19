@@ -1,8 +1,8 @@
 """
 Order Routes
 
-* **Date:** 8/4/26
-* **Programmers:** Mark and Chutiwat
+Date: 8/4/26
+Programmers: Mark and Chutiwat
 
 Handles fetching customer order histories and cancelling existing ticket orders.
 """

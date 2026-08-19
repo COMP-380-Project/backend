@@ -1,8 +1,8 @@
 """
 Movie Routes
 
-* **Date:** 8/4/26
-* **Programmers:** Mark and Chutiwat
+Date: 8/4/26
+Programmers: Mark and Chutiwat
 
 Provides search and retrieval endpoints for the active movie catalog.
 """

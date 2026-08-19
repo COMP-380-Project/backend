@@ -1,8 +1,8 @@
 """
 Seat Routes
 
-* **Date:** 8/4/26
-* **Programmers:** Mark and Chutiwat
+* Date: 8/4/26
+* Programmers: Mark and Chutiwat
 
 Monitors the availability, locking, and automatic expiration of individual seats.
 """

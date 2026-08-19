@@ -1,7 +1,7 @@
 """
 Auditorium Model
-* **Date:** 8/4/26
-* **Programmers:** Mark and Chutiwat
+Date: 8/4/26
+Programmers: Mark and Chutiwat
 
 Represents a specific physical theatre room within a theatre.
 Each auditorium can show different movies at different showtimes.

@@ -1,8 +1,8 @@
 """
 Admin/Manager Routes
 
-* **Date:** 8/10/26
-* **Programmer:** Mark Antonov
+Date: 8/10/26
+Programmer: Mark Antonov
 
 Manager-only endpoints for adding and managing movies, theatres,
 auditoriums, and showtimes. All routes require a valid manager
