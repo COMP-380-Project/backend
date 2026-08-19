@@ -1,7 +1,7 @@
 """
 Customer Model
-* **Date:** 8/4/26
-* **Programmers:** Mark and Chutiwat
+Date: 8/4/26
+Programmers: Mark and Chutiwat
 
 Represents a registered user within the system.
 Handles customer registration, login, and account management.

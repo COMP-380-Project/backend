@@ -1,8 +1,8 @@
 """
 User Model
 
-* **Date:** 8/5/26
-* **Programmers:** Mark and Chutiwat
+Date: 8/5/26
+Programmers: Mark and Chutiwat
 
 Represents a system user
 """

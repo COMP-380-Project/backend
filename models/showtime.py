@@ -1,7 +1,7 @@
 """
 Showtime Model
-* **Date:** 8/4/26
-* **Programmers:** Mark and Chutiwat
+ Date: 8/4/26
+ Programmers: Mark and Chutiwat
 
 Represents a specific showing of a movie at a particular time.
 Links movies to auditoriums with date/time and pricing information.

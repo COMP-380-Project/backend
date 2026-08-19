@@ -1,7 +1,7 @@
 """
 Ticket Model
-* **Date:** 8/4/26
-* **Programmers:** Mark and Chutiwat
+ Date: 8/4/26
+ Programmers: Mark and Chutiwat
 
 Represents a ticket for a specific movies showing at a specific seat
 """

@@ -1,7 +1,7 @@
 """
 Payment Model
-* **Date:** 8/4/26
-* **Programmers:** Mark and Chutiwat
+ Date: 8/4/26
+ Programmers: Mark and Chutiwat
 
 Represents payment transactions for ticket orders.
 """

@@ -1,11 +1,11 @@
 """
 Admin/Manager Permission Helper
 
-* **Date:** 8/10/26
-* **Programmer:** Mark Antonov
+Date: 8/10/26
+Programmer: Mark Antonov
 
 Shared helper used by manager-only routes to verify the requesting
-customer has manager-level access before allowing an action.
+customer has manager-level access before allowing an action
 """
 from models.customer import Customer
 

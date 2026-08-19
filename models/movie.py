@@ -1,7 +1,7 @@
 """
 Movie Model
-* **Date:** 8/4/26
-* **Programmers:** Mark and Chutiwat
+ Date: 8/4/26
+ Programmers: Mark and Chutiwat
 
 Represents movie in the booking system.
 """
