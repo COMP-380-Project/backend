@@ -61,7 +61,8 @@ def get_all_movies():
                 'description': movie.description,
                 'rating': movie.rating,
                 'cast': movie.cast,
-                'showtimes': get_showtimes_for_movie(movie.id)
+                'showtimes': get_showtimes_for_movie(movie.id),
+                'poster_url': movie.poster_url
             })
 
         return jsonify(movies_list), 200
@@ -97,7 +98,8 @@ def get_movie_details(movie_id):
             'description': movie.description,
             'rating': movie.rating,
             'cast': movie.cast,
-            'showtimes': get_showtimes_for_movie(movie.id)
+            'showtimes': get_showtimes_for_movie(movie.id),
+            'poster_url': movie.poster_url
         }), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -137,7 +139,8 @@ def search_movies():
             'description': movie_showing.movie.description,
             'rating': movie_showing.movie.rating,
             'cast': movie_showing.movie.cast,
-            'showtimes': get_showtimes_for_movie(movie_showing.movie.id)
+            'showtimes': get_showtimes_for_movie(movie_showing.movie.id),
+            'poster_url': movie_showing.movie.poster_url
         } for movie_showing in all_movies]
 
         return jsonify(movies_list), 200
