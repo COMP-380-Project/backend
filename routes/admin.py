@@ -294,3 +294,54 @@ def add_showtime():
         },
         'seats_created': seat_count
     }), 201
+
+
+@admin_bp.route('/reports', methods=['GET'])
+def get_movie_reports():
+    """
+    Get booking volume and revenue per movie, counting only tickets
+    tied to a confirmed order (abandoned carts don't count).
+
+    Query Parameters:
+        customer_id (int): ID of the manager making the request
+
+    Returns:
+        - 200 (OK): A JSON list of {movie_id, movie_name, bookings, revenue}
+        - 403 (Forbidden): Requesting customer is not a manager
+        - 404 (Not Found): customer_id does not exist
+    """
+    customer_id = request.args.get('customer_id', type=int)
+
+    customer, error = require_manager(customer_id)
+    if error:
+        return jsonify(error[0]), error[1]
+
+    reports = []
+    movies = Movie.query.all()
+
+    for movie in movies:
+        bookings = 0
+        revenue = 0.0
+
+        for showtime in movie.showtimes:
+            for ticket in showtime.tickets:
+                if not ticket.cart:
+                    continue
+
+                has_confirmed_order = any(
+                    order.order_status == 'confirmed'
+                    for order in ticket.cart.orders
+                )
+
+                if has_confirmed_order:
+                    bookings += 1
+                    revenue += ticket.price
+
+        reports.append({
+            'movie_id': movie.id,
+            'movie_name': movie.title,
+            'bookings': bookings,
+            'revenue': revenue
+        })
+
+    return jsonify(reports), 200
