@@ -141,3 +141,66 @@ def cancel_order(order_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+
+@orders_bp.route('/<int:customer_id>/tickets', methods=['GET'])
+def get_customer_tickets(customer_id):
+    """
+    Gets a flattened, ticket-level view of a customer's confirmed bookings,
+    including basic movie details for each ticket — used by the "My Bookings" page.
+
+    Args:
+
+        customer_id (int): The ID of the customer gotten from the URL path.
+
+    Returns:
+
+        - 200 (OK): A JSON list of ticket records with nested movie details.
+        - 404 (Not Found): A JSON error message if the customer is not found.
+        - 500 (Internal Server Error): A JSON error message if a server exception occurs.
+    """
+    try:
+        customer = Customer.query.get(customer_id)
+        if not customer:
+            return jsonify({'error': 'Customer not found'}), 404
+
+        confirmed_orders = Order.query.filter_by(
+            customer_id=customer_id,
+            order_status='confirmed'
+        ).all()
+
+        tickets_list = []
+        for order in confirmed_orders:
+            if not order.cart:
+                continue
+
+            for ticket in order.cart.tickets:
+                movie = ticket.showtime.movie if ticket.showtime else None
+
+                tickets_list.append({
+                    'ticket_id': ticket.id,
+                    'order_id': order.id,
+                    'movie_id': movie.id if movie else None,
+                    'showtime_id': ticket.showtime_id,
+                    'seat_number': ticket.seat.seat_number,
+                    'booked_at': (
+                        ticket.purchased_at.isoformat()
+                        if ticket.purchased_at
+                        else order.created_at.isoformat()
+                    ),
+                    'status': order.order_status,
+                    'movie': {
+                        'id': movie.id,
+                        'title': movie.title,
+                        'description': movie.description,
+                        'genre': movie.genre,
+                        'duration': movie.duration,
+                        'rating': movie.rating,
+                        'poster_url': movie.poster_url,
+                        'cast': movie.cast
+                    } if movie else None
+                })
+
+        return jsonify(tickets_list), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
